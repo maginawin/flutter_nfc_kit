@@ -536,18 +536,32 @@ public class SwiftFlutterNfcKitPlugin: NSObject, FlutterPlugin, NFCTagReaderSess
             }
             self.tag = firstTag
             
+            var isMiFare = false
             var ndefTag: NFCNDEFTag?
             switch self.tag {
             case let .iso7816(tag):
                 ndefTag = tag
             case let .miFare(tag):
                 ndefTag = tag
+                isMiFare = true
             case let .feliCa(tag):
                 ndefTag = tag
             case let .iso15693(tag):
                 ndefTag = tag
             default:
                 ndefTag = nil
+            }
+            
+            NSLog("ndefTag \(self.tag)", "")
+            if isMiFare {
+                NSLog("is MiFare, ignore queryNDEFStatus")
+                result["ndefAvailable"] = true
+                result["ndefWritable"] = true
+                let jsonData = try! JSONSerialization.data(withJSONObject: result)
+                let jsonString = String(data: jsonData, encoding: .utf8)
+                self.result?(jsonString)
+                self.result = nil
+                return
             }
             
             if ndefTag != nil {
