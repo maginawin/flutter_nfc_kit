@@ -191,3 +191,14 @@
 * Add Swift package manager support for iOS plugin, bump dependencies
 * Fix WebUSB interop on Web, add onDisconnect callback
 * Add support for foreground polling on Android (#16, #179)
+
+## 3.6.1
+
+* Refactor with new `dart:js_interop` APIs to fix build with WASM (#223)
+* Support `readBlock` / `writeBlock` on Mifare tags on iOS (#205 by @rushank-shah)
+* More robust logic on Android
+  * ensure NFC Handler is always alive (#219 by @Akshya107)
+  * prevent an NPE due to wrong API typing (#220)
+  * add comment on `poll` related to Samsung API bug (#190, #200)
+* Bump tools to Gradle 9.2.1, AGP 8.13.1, Kotlin 2.2.21
+  * Now `minSdkVersion` is lowered to 24 (#212)
