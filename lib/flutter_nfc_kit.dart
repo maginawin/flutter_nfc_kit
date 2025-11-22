@@ -7,6 +7,7 @@ import 'package:ndef/ndef.dart' as ndef;
 import 'package:ndef/ndef.dart' show TypeNameFormat; // for generated file
 import 'package:ndef/utilities.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 part 'flutter_nfc_kit.g.dart';
 
@@ -277,7 +278,7 @@ class FlutterNfcKit {
 
   static const MethodChannel _channel = MethodChannel('flutter_nfc_kit/method');
 
-  static const EventChannel _tagEventChannel =
+  static final EventChannel _tagEventChannel =
       EventChannel('flutter_nfc_kit/event');
 
   /// Stream of NFC tag events. Each event is a [NFCTag] object.
@@ -285,6 +286,9 @@ class FlutterNfcKit {
   /// This is only supported on Android.
   /// On other platforms, this stream will always be empty.
   static Stream<NFCTag> get tagStream {
+    if (!UniversalPlatform.isAndroid) {
+      return const Stream<NFCTag>.empty();
+    }
     return _tagEventChannel.receiveBroadcastStream().map((dynamic event) {
       final Map<String, dynamic> json = jsonDecode(event as String);
       return NFCTag.fromJson(json);
