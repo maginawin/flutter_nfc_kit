@@ -21,7 +21,8 @@ const int USB_CLASS_CODE_VENDOR_SPECIFIC = 0xFF;
 
 @JS('navigator.usb')
 extension type _USB._(JSObject _) implements JSObject {
-  external static JSPromise<JSObject> requestDevice(_USBDeviceRequestOptions options);
+  external static JSPromise<JSObject> requestDevice(
+      _USBDeviceRequestOptions options);
   external static set ondisconnect(JSFunction value);
 }
 
@@ -58,7 +59,8 @@ class WebUSB {
   static Function? onDisconnect;
 
   static bool _deviceAvailable() {
-    return _device != null && _device!.getProperty<JSBoolean>('opened'.toJS).toDart;
+    return _device != null &&
+        _device!.getProperty<JSBoolean>('opened'.toJS).toDart;
   }
 
   static Uint8List _getDataBufferFromResponse(JSObject response) {
@@ -80,7 +82,8 @@ class WebUSB {
         var openPromise = device.callMethod('open'.toJS) as JSPromise;
         await openPromise.toDart
             .then((_) =>
-                (device.callMethod('claimInterface'.toJS, 1.toJS) as JSPromise).toDart)
+                (device.callMethod('claimInterface'.toJS, 1.toJS) as JSPromise)
+                    .toDart)
             .timeout(Duration(milliseconds: timeout));
         _device = device;
         _USB.ondisconnect = () {
@@ -100,16 +103,16 @@ class WebUSB {
       if (probeMagic) {
         try {
           // PROBE request
-          var promise = device.callMethod('controlTransferIn'.toJS,
-            _USBControlTransferParameters(
-                requestType: 'vendor',
-                recipient: 'interface',
-                request: 0xff,
-                value: 0,
-                index: 1),
-            1.toJS
-          ) as JSPromise<JSObject>;
-          var resp = await promise.toDart ;
+          var promise = device.callMethod(
+              'controlTransferIn'.toJS,
+              _USBControlTransferParameters(
+                  requestType: 'vendor',
+                  recipient: 'interface',
+                  request: 0xff,
+                  value: 0,
+                  index: 1),
+              1.toJS) as JSPromise<JSObject>;
+          var resp = await promise.toDart;
           if (resp.getProperty<JSString>('status'.toJS).toDart == 'stalled') {
             throw PlatformException(
                 code: "500", message: "Device error: transfer stalled");
@@ -149,27 +152,27 @@ class WebUSB {
 
   static Future<Uint8List> _doTransceive(Uint8List capdu) async {
     // send a command (CMD)
-    var promise = _device!.callMethod('controlTransferOut'.toJS, 
-      _USBControlTransferParameters(
-          requestType: 'vendor',
-          recipient: 'interface',
-          request: 0,
-          value: 0,
-          index: 1),
-      capdu.toJS
-    ) as JSPromise<JSObject>;
-    await promise.toDart;
-    // wait for execution to finish (STAT)
-    while (true) {
-      promise = _device!.callMethod('controlTransferIn'.toJS, 
+    var promise = _device!.callMethod(
+        'controlTransferOut'.toJS,
         _USBControlTransferParameters(
             requestType: 'vendor',
             recipient: 'interface',
-            request: 2,
+            request: 0,
             value: 0,
             index: 1),
-        1.toJS
-      ) as JSPromise<JSObject>;
+        capdu.toJS) as JSPromise<JSObject>;
+    await promise.toDart;
+    // wait for execution to finish (STAT)
+    while (true) {
+      promise = _device!.callMethod(
+          'controlTransferIn'.toJS,
+          _USBControlTransferParameters(
+              requestType: 'vendor',
+              recipient: 'interface',
+              request: 2,
+              value: 0,
+              index: 1),
+          1.toJS) as JSPromise<JSObject>;
       var resp = await promise.toDart;
       if (resp.getProperty<JSString>('status'.toJS).toDart == 'stalled') {
         throw PlatformException(
@@ -186,15 +189,15 @@ class WebUSB {
       }
     }
     // get the response (RESP)
-    promise = _device!.callMethod('controlTransferIn'.toJS, 
-      _USBControlTransferParameters(
-          requestType: 'vendor',
-          recipient: 'interface',
-          request: 1,
-          value: 0,
-          index: 1),
-      1500.toJS
-    ) as JSPromise<JSObject>;
+    promise = _device!.callMethod(
+        'controlTransferIn'.toJS,
+        _USBControlTransferParameters(
+            requestType: 'vendor',
+            recipient: 'interface',
+            request: 1,
+            value: 0,
+            index: 1),
+        1500.toJS) as JSPromise<JSObject>;
     var resp = await promise.toDart;
     var deviceStatus = resp.getProperty<JSString>('status'.toJS).toDart;
     if (deviceStatus != 'ok') {
@@ -237,7 +240,8 @@ class WebUSB {
     if (_deviceAvailable()) {
       if (closeWebUSB) {
         try {
-          await (_device!.callMethod("close".toJS) as JSPromise<JSObject>).toDart;
+          await (_device!.callMethod("close".toJS) as JSPromise<JSObject>)
+              .toDart;
         } on Exception catch (e) {
           log.severe("Finish error: ", e);
           throw PlatformException(
