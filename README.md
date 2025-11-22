@@ -35,7 +35,7 @@ We have the following minimum version requirements for Android plugin:
 
 * Java 17
 * Gradle 8.9
-* Android SDK 26 (you must set corresponding `jvmTarget` in you app's `build.gradle`)
+* Android SDK 24 (you must set corresponding `jvmTarget` in you app's `build.gradle`)
 * Android Gradle Plugin 8.7
 
 To use this plugin on Android, you also need to:
