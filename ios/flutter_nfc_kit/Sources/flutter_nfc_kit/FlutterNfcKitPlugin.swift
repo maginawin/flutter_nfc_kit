@@ -212,16 +212,16 @@ public class FlutterNfcKitPlugin: NSObject, FlutterPlugin, NFCTagReaderSessionDe
                 }
             }
             else if case let .miFare(tag) = tag {
-                            let blockNumber = arguments["index"] as! UInt8
-                            let commandPacket = Data([0x30, blockNumber]) //0x30 is the MIFARE Classic Read Command.
-                             tag.sendMiFareCommand(commandPacket: commandPacket) { (data, error) in
-                                 if let error = error {
-                                    result(FlutterError(code: "405", message: "Something is wrong", details: nil))
-                                 } else {
-                                     result(data)
-                                 }
-                             }
-            }             
+                let blockNumber = arguments["index"] as! UInt8
+                let commandPacket = Data([0x30, blockNumber]) //0x30 is the MIFARE Classic Read Command.
+                tag.sendMiFareCommand(commandPacket: commandPacket) { (data, error) in
+                    if let error = error {
+                        result(FlutterError(code: "405", message: "Something is wrong", details: nil))
+                    } else {
+                        result(data)
+                    }
+                }
+            }
             else {
                 result(FlutterError(code: "405", message: "readBlock not supported on this type of card", details: nil))
             }
@@ -251,14 +251,13 @@ public class FlutterNfcKitPlugin: NSObject, FlutterPlugin, NFCTagReaderSessionDe
                    let writeCommand = Data([0xA2, blockNumber]) + data  //0xA2 is the MIFARE Classic Write Command to write single block.
                    tag.sendMiFareCommand(commandPacket: writeCommand) { (response, error) in
                         if let error = error {
-                             result(FlutterError(code: "500", message: "Communication error", details: nil))
+                             result(FlutterError(code: "500", message: "Communication error", details: error.localizedDescription))
                          }
-                        else
-                         {
+                        else {
                             result(nil)
-                         }
+                        }
                    }
-            }            
+            }
             else {
                     result(FlutterError(code: "405", message: "writeBlock not supported on this type of card", details: nil))
             }
