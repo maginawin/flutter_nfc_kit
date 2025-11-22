@@ -313,6 +313,8 @@ class FlutterNfcKit {
   ///
   /// The four boolean flags [readIso14443A], [readIso14443B], [readIso18092], [readIso15693] control the NFC technology that would be tried.
   /// On iOS, setting any of [readIso14443A] and [readIso14443B] will enable `iso14443` in `pollingOption`.
+  /// On Samsung Android devices, you may need to have [readIso18092] set to read other types of cards (e.g. Felica).
+  /// See <https://github.com/nfcim/flutter_nfc_kit/issues/190> for detailed discussion.
   ///
   /// On Web, all parameters are ignored except [timeout] and [probeWebUSBMagic].
   /// If [probeWebUSBMagic] is set, the library will use the `PROBE` request to check whether the device supports our API (see [FlutterNfcKitWeb] for details).
