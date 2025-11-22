@@ -20,14 +20,14 @@ jobs:
             os: ubuntu-latest
             pre-build-script: ""
             build-args: ""
-            debug-artifact-path: build/app/outputs/flutter-apk/app-debug.apk
-            release-artifact-path: build/app/outputs/flutter-apk/app-release.apk
+            debug-artifact-path: example/build/app/outputs/flutter-apk/app-debug.apk
+            release-artifact-path: example/build/app/outputs/flutter-apk/app-release.apk
           - target: ios
             os: macos-latest
             pre-build-script: ""
             build-args: "--no-codesign"
             artifact-path: |
-              build/ios/iphoneos/Runner.app
+              example/build/ios/iphoneos/Runner.app
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.target }}-${{ matrix.variant }}
@@ -46,6 +46,7 @@ jobs:
 
     - name: pre-build-script for ${{ matrix.target }}
       run: ${{ matrix.pre-build-script }}
+      if: ${{ matrix.pre-build-script != '' }}
 
     - run: flutter pub get
       working-directory: example/
@@ -58,5 +59,6 @@ jobs:
       with:
         name: example-${{ matrix.target }}-${{ matrix.variant }}
         path: |
-          example/${{ matrix.debug-artifact-path }}
-          example/${{ matrix.release-artifact-path }}
+          ${{ matrix.debug-artifact-path }}
+          ${{ matrix.release-artifact-path }}
+          ${{ matrix.artifact-path }}
