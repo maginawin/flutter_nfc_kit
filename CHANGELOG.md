@@ -197,7 +197,7 @@
 * Refactor with new `dart:js_interop` APIs to fix build with WASM (#223)
 * Support `readBlock` / `writeBlock` on Mifare tags on iOS (#205 by @rushank-shah)
 * More robust logic on Android
-  * ensure NFC Handler is always alive (#219 by @Akshya107)
+  * ensure NFC Handler is always alive (#219)
   * prevent an NPE due to wrong API typing (#220)
   * add comment on `poll` related to Samsung API bug (#190, #200)
 * Add more detailed error message in iOS APIs
