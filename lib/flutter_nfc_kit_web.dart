@@ -1,10 +1,7 @@
 import 'dart:async';
-// In order to *not* need this ignore, consider extracting the "web" version
-// of your plugin as a separate package, instead of inlining it in the same
-// package as the core of your plugin.
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html show window;
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
+import 'package:web/web.dart' show window;
 import 'package:convert/convert.dart';
 
 import 'package:flutter/services.dart';
@@ -35,7 +32,7 @@ class FlutterNfcKitWeb {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'getNFCAvailability':
-        if (hasProperty(html.window.navigator, 'usb')) {
+        if (window.navigator.hasProperty('usb'.toJS).toDart) {
           return 'available';
         } else {
           return 'not_supported';

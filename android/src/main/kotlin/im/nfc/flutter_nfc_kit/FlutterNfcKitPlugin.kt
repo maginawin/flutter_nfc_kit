@@ -71,6 +71,13 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             return transceiveMethod.invoke(this, data) as ByteArray
         }
 
+        private fun ensureNfcHandler() {
+            if (!::nfcHandlerThread.isInitialized || !nfcHandlerThread.isAlive) {
+                nfcHandlerThread = HandlerThread("FlutterNfcKit-NfcHandlerThread").apply { start() }
+                nfcHandler = Handler(nfcHandlerThread.looper)
+            }
+        }
+
         private fun runOnNfcThread(result: Result, desc: String, fn: () -> Unit) {
             val handledFn = Runnable {
                 try {
@@ -89,6 +96,7 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     }
                 }
             }
+            ensureNfcHandler()
             if (!nfcHandler.post(handledFn)) {
                 result.error("500", "Failed to post job to NFC Handler thread.", null)
             }
@@ -131,7 +139,9 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         type = "iso7816"
                         val isoDep = IsoDep.get(tag)
                         tagTechnology = isoDep
-                        historicalBytes = isoDep.historicalBytes.toHexString()
+                        // historicalBytes() may return null but is wrongly typed as ByteArray!
+                        // https://developer.android.com/reference/kotlin/android/nfc/tech/IsoDep#gethistoricalbytes
+                        historicalBytes = (isoDep.historicalBytes as ByteArray?)?.toHexString() ?: ""
                     }
                     tag.techList.contains(MifareClassic::class.java.name) -> {
                         standard = "ISO 14443-3 (Type A)"
@@ -241,9 +251,7 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        nfcHandlerThread = HandlerThread("NfcHandlerThread")
-        nfcHandlerThread.start()
-        nfcHandler = Handler(nfcHandlerThread.looper)
+        ensureNfcHandler()
 
         methodChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_nfc_kit/method")
         methodChannel.setMethodCallHandler(this)

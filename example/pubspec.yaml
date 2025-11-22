@@ -11,7 +11,7 @@ dependencies:
   flutter_nfc_kit:
     path: ../
   logging: ^1.3.0
-  ndef: ^0.3.3
+  ndef: ^0.4.0
   cupertino_icons: ^1.0.8
 
 dev_dependencies:

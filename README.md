@@ -1,7 +1,8 @@
 # Flutter NFC Kit
 
 [![pub version](https://img.shields.io/pub/v/flutter_nfc_kit)](https://pub.dev/packages/flutter_nfc_kit)
-![Build Example App](https://github.com/nfcim/flutter_nfc_kit/workflows/Build%20Example%20App/badge.svg)
+[![Test](https://github.com/nfcim/flutter_nfc_kit/actions/workflows/test.yml/badge.svg)](https://github.com/nfcim/flutter_nfc_kit/actions/workflows/test.yml)
+[![Build Example App](https://github.com/nfcim/flutter_nfc_kit/actions/workflows/example-app.yml/badge.svg)](https://github.com/nfcim/flutter_nfc_kit/actions/workflows/example-app.yml)
 
 Yet another plugin to provide NFC functionality on Android, iOS and browsers (by WebUSB, see below).
 
@@ -10,9 +11,9 @@ This plugin's functionalities include:
 * read metadata and read & write NDEF records of tags / cards complying with:
   * ISO 14443 Type A & Type B (NFC-A / NFC-B / MIFARE Classic / MIFARE Plus / MIFARE Ultralight / MIFARE DESFire)
   * ISO 18092 (NFC-F / FeliCa)
-  * ISO 15963 (NFC-V)
+  * ISO 15693 (NFC-V)
 * R/W block / page / sector level data of tags complying with:
-  * MIFARE Classic / Ultralight (Android only)
+  * MIFARE Classic / Ultralight (Android only, MIFARE Classic Read & Write block for iOS)
   * ISO 15693 (iOS only)
 * transceive raw commands with tags / cards complying with:
   * ISO 7816 Smart Cards (layer 4, in APDUs)
@@ -35,7 +36,7 @@ We have the following minimum version requirements for Android plugin:
 
 * Java 17
 * Gradle 8.9
-* Android SDK 26 (you must set corresponding `jvmTarget` in you app's `build.gradle`)
+* Android SDK 24 (you must set corresponding `jvmTarget` in you app's `build.gradle`)
 * Android Gradle Plugin 8.7
 
 To use this plugin on Android, you also need to:
