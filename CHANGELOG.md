@@ -200,5 +200,6 @@
   * ensure NFC Handler is always alive (#219 by @Akshya107)
   * prevent an NPE due to wrong API typing (#220)
   * add comment on `poll` related to Samsung API bug (#190, #200)
+* Add more detailed error message in iOS APIs
 * Bump tools to Gradle 9.2.1, AGP 8.13.0, Kotlin 2.2.21
   * Now `minSdkVersion` is lowered to 24 (#212)

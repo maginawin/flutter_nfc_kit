@@ -44,7 +44,7 @@ jobs:
         channel: 'stable'
         cache: true
 
-    - name: pre-build-script script for ${{ matrix.target }}
+    - name: pre-build-script for ${{ matrix.target }}
       run: ${{ matrix.pre-build-script }}
 
     - run: flutter pub get
