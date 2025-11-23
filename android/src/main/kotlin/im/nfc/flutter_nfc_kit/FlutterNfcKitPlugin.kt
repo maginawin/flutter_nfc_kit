@@ -329,8 +329,9 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val timeout = call.argument<Int>("timeout")!!
                 // technology and option bits are set in Dart code
                 val technologies = call.argument<Int>("technologies")!!
+                val readerModeFlags = call.argument<Int>("readerModeFlags")
                 runOnNfcThread(result, "Poll") {
-                    pollTag(nfcAdapter, result, timeout, technologies)
+                    pollTag(nfcAdapter, result, timeout, technologies, readerModeFlags)
                 }
             }
 
@@ -583,7 +584,7 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromActivityForConfigChanges() {}
 
-    private fun pollTag(nfcAdapter: NfcAdapter, result: Result, timeout: Int, technologies: Int) {
+    private fun pollTag(nfcAdapter: NfcAdapter, result: Result, timeout: Int, technologies: Int, readerModeFlags: Int?) {
 
         pollingTimeoutTask = Timer().schedule(timeout.toLong()) {
             try {
@@ -604,7 +605,14 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             result.success(jsonResult)
         }
 
-        nfcAdapter.enableReaderMode(activity.get(), pollHandler, technologies, null)
+        // Build final flags: combine technology flags with optional reader mode flags
+        val finalFlags = if (readerModeFlags != null) {
+            technologies or readerModeFlags
+        } else {
+            technologies
+        }
+
+        nfcAdapter.enableReaderMode(activity.get(), pollHandler, finalFlags, null)
     }
 
     private class MethodResultWrapper(result: Result) : Result {

@@ -325,10 +325,34 @@ class FlutterNfcKit {
   ///
   /// Note: Sometimes NDEF check [leads to error](https://github.com/nfcim/flutter_nfc_kit/issues/11), and disabling it might help.
   /// If disabled, you will not be able to use any NDEF-related methods in the current session.
+  ///
+  /// **Android Reader Mode Flags** ([androidReaderModeFlags]):
+  ///
+  /// Optional flags to customize Android's NFC Reader Mode behavior. These are combined
+  /// with the technology flags using bitwise OR. Common flags from `android.nfc.NfcAdapter`:
+  ///
+  /// - `0x80` (`FLAG_READER_SKIP_NDEF_CHECK`) - Skip automatic NDEF discovery, improving
+  ///   tag detection speed by ~500ms. Use this for faster polling when you don't need
+  ///   automatic NDEF parsing.
+  ///
+  /// - `0x100` (`FLAG_READER_NO_PLATFORM_SOUNDS`) - Disable system beep/vibration when
+  ///   tags are detected. Useful when implementing custom audio/haptic feedback.
+  ///
+  /// Example for fast tag detection with custom feedback:
+  /// ```dart
+  /// const flags = 0x80 | 0x100; // SKIP_NDEF_CHECK | NO_PLATFORM_SOUNDS
+  /// final tag = await FlutterNfcKit.poll(
+  ///   androidReaderModeFlags: flags,
+  /// );
+  /// ```
+  ///
+  /// See [Android NfcAdapter documentation](https://developer.android.com/reference/android/nfc/NfcAdapter#enableReaderMode(android.app.Activity,%20android.nfc.NfcAdapter.ReaderCallback,%20int,%20android.os.Bundle))
+  /// for all available flags.
   static Future<NFCTag> poll({
     Duration? timeout,
     bool androidPlatformSound = true,
     bool androidCheckNDEF = true,
+    int? androidReaderModeFlags,
     String iosAlertMessage = "Hold your iPhone near the card",
     String iosMultipleTagMessage =
         "More than one tags are detected, please leave only one tag and try again.",
@@ -354,6 +378,7 @@ class FlutterNfcKit {
       'iosMultipleTagMessage': iosMultipleTagMessage,
       'technologies': technologies,
       'probeWebUSBMagic': probeWebUSBMagic,
+      'readerModeFlags': androidReaderModeFlags,
     });
     return NFCTag.fromJson(jsonDecode(data));
   }
@@ -529,4 +554,5 @@ class FlutterNfcKit {
   static Future<Uint8List> readSector(int index) async {
     return await _channel.invokeMethod('readSector', {'index': index});
   }
+
 }
