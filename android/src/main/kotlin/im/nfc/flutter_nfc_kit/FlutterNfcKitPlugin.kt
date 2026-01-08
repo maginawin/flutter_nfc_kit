@@ -330,8 +330,10 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val timeout = call.argument<Int>("timeout")!!
                 // technology and option bits are set in Dart code
                 val technologies = call.argument<Int>("technologies")!!
+                val extraPresenceDelay = call.argument<Int>("extra_reader_presence_check_delay")
+
                 runOnNfcThread(result, "Poll") {
-                    pollTag(nfcAdapter, result, timeout, technologies)
+                    pollTag(nfcAdapter, result, timeout, technologies, extraPresenceDelay)
                 }
             }
 
@@ -584,8 +586,7 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromActivityForConfigChanges() {}
 
-    private fun pollTag(nfcAdapter: NfcAdapter, result: Result, timeout: Int, technologies: Int) {
-
+    private fun pollTag(nfcAdapter: NfcAdapter, result: Result, timeout: Int, technologies: Int, extraReaderPresenceCheckDelay: Int?) {
         pollingTimeoutTask = Timer().schedule(timeout.toLong()) {
             try {
                 if (activity.get() != null) {
@@ -605,11 +606,10 @@ class FlutterNfcKitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             result.success(jsonResult)
         }
 
-        // The EXTRA_READER_PRESENCE_CHECK_DELAY is for fixing an obscure bug with
-        // some Android versions like LineageOS 17.1 that caused the PACE authentication to fail.
-        // See https://github.com/privacybydesign/vcmrtd/issues/91 for more info.
         val options = Bundle()
-        options.putInt(EXTRA_READER_PRESENCE_CHECK_DELAY, 2000)
+        if (extraReaderPresenceCheckDelay != null) {
+            options.putInt(EXTRA_READER_PRESENCE_CHECK_DELAY, extraReaderPresenceCheckDelay)
+        }
         nfcAdapter.enableReaderMode(activity.get(), pollHandler, technologies, options)
     }
 
