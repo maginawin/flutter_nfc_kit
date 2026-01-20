@@ -1,3 +1,12 @@
+## Unreleased
+
+### Added
+* New `androidReaderModeFlags` parameter for `poll()` method to customize Android Reader Mode behavior
+  * Allows passing flags like `FLAG_READER_SKIP_NDEF_CHECK` (0x80) for faster tag detection (~500ms improvement)
+  * Supports `FLAG_READER_NO_PLATFORM_SOUNDS` (0x100) to disable system beeps for custom feedback
+  * Flags are combined with technology flags using bitwise OR
+  * Fully backward compatible - optional parameter defaults to null
+
 ## 0.0.1
 
 * Initial release
