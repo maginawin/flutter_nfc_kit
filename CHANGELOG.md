@@ -1,12 +1,3 @@
-## Unreleased
-
-### Added
-* New `androidReaderModeFlags` parameter for `poll()` method to customize Android Reader Mode behavior
-  * Allows passing flags like `FLAG_READER_SKIP_NDEF_CHECK` (0x80) for faster tag detection (~500ms improvement)
-  * Supports `FLAG_READER_NO_PLATFORM_SOUNDS` (0x100) to disable system beeps for custom feedback
-  * Flags are combined with technology flags using bitwise OR
-  * Fully backward compatible - optional parameter defaults to null
-
 ## 0.0.1
 
 * Initial release
@@ -212,3 +203,8 @@
 * Add more detailed error message in iOS APIs
 * Bump tools to Gradle 9.2.1, AGP 8.13.0, Kotlin 2.2.21
   * Now `minSdkVersion` is lowered to 24 (#212)
+
+## 3.6.2
+
+* New `androidReaderModeFlags` parameter for `poll()` method to customize Android Reader Mode behavior (#225)
+* Add option to specify `EXTRA_READER_PRESENCE_CHECK_DELAY` on Android (#228)
